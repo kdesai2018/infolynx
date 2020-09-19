@@ -21,6 +21,7 @@ def get_video_info():
     # url contains the url string
     # url = request.args['url']
     url = 'https://www.youtube.com/watch?v=3yLXNzDUH58'
+    
     # Get the video id
     url_data = urlparse.urlparse(url)
     query = urlparse.parse_qs(url_data.query)
@@ -28,7 +29,7 @@ def get_video_info():
 
     # Create URL for transcript
     transcript_url = "http://video.google.com/timedtext?lang=en&v="+video_id
-    print(transcript_url)
+    # print(transcript_url)
     #  get transcript xml sheet from transcript_url
     transcript_response = urllib.request.urlopen(transcript_url).read()
     tree = ET.fromstring(transcript_response)
@@ -38,14 +39,15 @@ def get_video_info():
 
     for node in tree.iter('text'):
         start_time = round(float(node.attrib['start']))
-        print(node.text)
+        # print(node.text)
         try:
             data = getKeywordsText(node.text, 1)
             for keywords in data['keywords']:
                     timed_transcript[start_time] = keywords["text"]
+            for entities in data['entities']:
+                timed_transcript[start_time] = entities["text"]
         except:
             data = None
-            timed_transcript[start_time] = None
 
     print(timed_transcript)
 
@@ -63,7 +65,7 @@ def getKeywordsURL(transcript_url):
 
     response = natural_language_understanding.analyze(
         url=transcript_url,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=1), entities=EntitiesOptions(sentiment=False,limit=1))).get_result()
 
     return response
 
@@ -79,9 +81,9 @@ def getKeywordsText(text, numWords):
 
     response = natural_language_understanding.analyze(
         text=text,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=False,limit=numWords))).get_result()
 
-    print(response)
+    # print(response)
     return response
 
 get_video_info()
