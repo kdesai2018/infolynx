@@ -37,11 +37,15 @@ def get_video_info():
     timed_transcript = {}
 
     for node in tree.iter('text'):
-        print(node.attrib)
         start_time = round(float(node.attrib['start']))
-        data = getKeywordsText(node.text, 1)
-        for keywords in data['keywords']:
-                timed_transcript[start_time] = keywords["text"]
+        print(node.text)
+        try:
+            data = getKeywordsText(node.text, 1)
+            for keywords in data['keywords']:
+                    timed_transcript[start_time] = keywords["text"]
+        except:
+            data = None
+            timed_transcript[start_time] = None
         
     print(timed_transcript)
 
@@ -79,3 +83,5 @@ def getKeywordsText(text, numWords):
 
     print(response)
     return response
+
+get_video_info()
