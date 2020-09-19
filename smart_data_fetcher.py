@@ -7,11 +7,24 @@ RESULTS_LIMIT = 5
 KNOWLEDGE_GRAPH_URL = "https://kgsearch.googleapis.com/v1/entities:search"
 CONFIDENCE_THRESHOLD = 500.0
 
-# ============    Call this function 'get_keyword_description_and_image'   ============
-# keyword = string containing keyword entity
-# printing = boolean option determining whether to print KG results to console (False by default)
+# ============    Call this function 'get_smart_data_for_keyword'   ============
+# Parameters:
+# 	keyword = string containing keyword entity
+# 	printing = boolean option determining whether to print KG results to console (False by default)
+#
+# Returned dictionary key/value pairs:
+#	"proper_name" = top result label or name as returned by KG
+#   "image_url" = direct link to an image asset
+#   "what_is_it" = very brief description of keyword
+#   "description" = complete description of keyword
+#   "wikipedia_link" = link to Wikipedia page about keyword or otherwise returns official link
+#                       where user can go to learn more
+#
+# Things to note:
+# 	--"proper_name" is the only required field; others may be absent, particularly the "what_is_it" field.
+#   --If no (sufficiently matched) results are found, return value is None
 # =====================================================================================
-def get_keyword_description_and_image(keyword, printing=False):
+def get_smart_data_for_keyword(keyword, printing=False):
 	params = {"query" : keyword, "limit" : RESULTS_LIMIT, "key" : PROJECT_API_KEY}
 	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.urlencode(params)
 	try:
@@ -53,7 +66,7 @@ def get_keyword_description_and_image(keyword, printing=False):
 
 # Testing with different keywords
 test_terms = []
-#test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "pyroxene"]
+#test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "couple layers"]
 for term in test_terms:
-	get_keyword_description_and_image(term, printing=True)
+	get_smart_data_for_keyword(term, printing=True)
 	print ""
