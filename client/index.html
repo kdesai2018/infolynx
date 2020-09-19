@@ -16,22 +16,23 @@
         <div class="main">
             <h2>Welcome to the Magic Zoom Bus!</h2>
             <div id="linkform">
-                <input type="text" id="link"/><button onclick="getData()">Get Video</button>
+                <input type="text" id="link" placeholder="Enter YouTube URL" /><button onclick="getData()">Get
+                    Video</button>
             </div>
-            <div class="YouTube" style="height:450px;background-color: gray;">Video</div>
-            <p>Some text..</p>
-            <p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco.</p>
+            <div class="YouTube" style="height:70vh;background-color: gray;">
+                <div id="player"></div>
+                <!--iframe id="video" width="100%" height="100%" src="" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe-->
+            </div>
             <br>
         </div>
         <div class="side">
             <h2>Information</h2>
-            <div class="InfoWindow" style="height:175px;background-color: blue;">Information</div>
+            <div class="InfoWindow" style="height:20vh;background-color: blue;">Information</div>
             <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
-            <br />
-            <br />
-            <div class="NotesWindow" style="height:300px;background-color:green;">Notes</div><br>
+            <h2>Notes</h2>
+            <textarea style="height: 40vh; width: 30vw;" placeholder="Take notes here!"></textarea>
         </div>
     </div>
 
