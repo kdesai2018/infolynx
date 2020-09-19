@@ -39,11 +39,13 @@ def get_video_info():
     for node in tree.iter('text'):
         print(node.attrib)
         start_time = round(float(node.attrib['start']))
-        timed_transcript[start_time] = node.text
-
+        data = getKeywordsText(node.text, 1)
+        for keywords in data['keywords']:
+                timed_transcript[start_time] = keywords["text"]
+        
     print(timed_transcript)
 
-    return getKeywordsURL(transcript_url)
+    return timed_transcript
 
 def getKeywordsURL(transcript_url):
     #IBM Watson NLU
@@ -61,7 +63,7 @@ def getKeywordsURL(transcript_url):
 
     return response
 
-def getKeywordsText(text):
+def getKeywordsText(text, numWords):
     #IBM Watson NLU
     authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
     natural_language_understanding = NaturalLanguageUnderstandingV1(
@@ -73,9 +75,7 @@ def getKeywordsText(text):
 
     response = natural_language_understanding.analyze(
         text=text,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
 
     print(response)
     return response
-
-getKeywordsText("The elephant was big and large, it has grey feet and likes George Washington. The big elephant has a pet dog.")
