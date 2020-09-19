@@ -4,7 +4,7 @@ import urllib.request
 import urllib.parse as urlparse
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
-from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions
+from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions, EntitiesOptions
 from flask import Flask, render_template, send_file, Response, request, jsonify
 import xml.etree.ElementTree as ET
 import math
@@ -43,9 +43,9 @@ def get_video_info():
 
     print(timed_transcript)
 
-    return getKeywords(transcript_url)
+    return getKeywordsURL(transcript_url)
 
-def getKeywords(transcript_url):
+def getKeywordsURL(transcript_url):
     #IBM Watson NLU
     authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
     natural_language_understanding = NaturalLanguageUnderstandingV1(
@@ -57,8 +57,25 @@ def getKeywords(transcript_url):
 
     response = natural_language_understanding.analyze(
         url=transcript_url,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
 
     return response
 
-getKeywords("http://video.google.com/timedtext?lang=en&v=aircAruvnKk")
+def getKeywordsText(text):
+    #IBM Watson NLU
+    authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
+    natural_language_understanding = NaturalLanguageUnderstandingV1(
+        version='2020-08-01',
+        authenticator=authenticator
+    )
+
+    natural_language_understanding.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
+
+    response = natural_language_understanding.analyze(
+        text=text,
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+
+    print(response)
+    return response
+
+getKeywordsText("The elephant was big and large, it has grey feet and likes George Washington. The big elephant has a pet dog.")
