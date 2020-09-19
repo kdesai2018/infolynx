@@ -7,26 +7,7 @@ RESULTS_LIMIT = 5
 KNOWLEDGE_GRAPH_URL = "https://kgsearch.googleapis.com/v1/entities:search"
 CONFIDENCE_THRESHOLD = 500.0
 
-# ============    Call this function 'get_smart_data_for_keyword'   ============
-# Parameters:
-# 	keyword = string containing keyword entity
-# 	printing = boolean option determining whether to print KG results to console (False by default)
-#
-# Returned dictionary key/value pairs:
-#	"proper_name" = top result label or name as returned by KG
-#   "image_url" = direct link to an image asset
-#   "what_is_it" = very brief description of keyword
-#   "description" = complete description of keyword
-#   "wikipedia_link" = link to Wikipedia page about keyword or otherwise returns official link
-#                       where user can go to learn more
-#
-# Things to note:
-# 	--"proper_name" is the only required field; others may be absent, particularly the "what_is_it" field.
-#   --If no (sufficiently matched) results are found, return value is None
-# =====================================================================================
-def get_smart_data_for_keyword(keyword, printing=False):
-	params = {"query" : keyword, "limit" : RESULTS_LIMIT, "key" : PROJECT_API_KEY}
-	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.urlencode(params)
+def make_kg_query(GET_request, keyword, printing=False):
 	try:
 		json_response = urllib2.urlopen(GET_request)
 	except urllib2.URLError as e:
@@ -62,7 +43,39 @@ def get_smart_data_for_keyword(keyword, printing=False):
 		except Exception as e:
 			print(" JSON Parsing Error: required data field missing ")
 	return None
-	
+
+
+# ============    Call this function 'get_smart_data_for_keyword'   ============
+# Parameters:
+# 	keyword = string containing keyword entity
+#   entity_types = list of strings, each representing a helpful type that classifies the keyword
+#					(empty list by default), should be sentence-capitalized and match a KG Schema type
+# 	printing = boolean option determining whether to print KG results to console (False by default)
+#
+# Returned dictionary key/value pairs:
+#	"proper_name" = top result label or name as returned by KG
+#   "image_url" = direct link to an image asset
+#   "what_is_it" = very brief description of keyword
+#   "description" = complete description of keyword
+#   "wikipedia_link" = link to Wikipedia page about keyword or otherwise returns official link
+#                       where user can go to learn more
+#
+# Things to note:
+# 	--"proper_name" is the only required field; others may be absent, particularly the "what_is_it" field.
+#   --If no (sufficiently matched) results are found, return value is None
+# =====================================================================================
+def get_smart_data_for_keyword(keyword, entity_types=[], printing=False):
+	params = {"query" : keyword, "limit" : RESULTS_LIMIT, "key" : PROJECT_API_KEY}
+	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.urlencode(params)
+	typed_request = GET_request
+	for e_type in entity_types:
+		typed_request += "&types=" + e_type
+	typed_result = make_kg_query(typed_request, keyword, printing)
+	if typed_result == None:
+		untyped_result = make_kg_query(GET_request, keyword, printing)
+		return untyped_result
+	return typed_result
+
 
 # Testing with different keywords
 test_terms = []
@@ -70,3 +83,6 @@ test_terms = []
 for term in test_terms:
 	get_smart_data_for_keyword(term, printing=True)
 	print ""
+
+# Test entity_types list for improved results
+#get_smart_data_for_keyword("george washington carver", ["Person"], printing=True)
