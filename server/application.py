@@ -1,6 +1,6 @@
 import os
 import json
-import urllib.parse
+import urllib.parse as urlparse
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions
