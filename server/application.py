@@ -10,6 +10,7 @@ from flask_cors import CORS
 import xml.etree.ElementTree as ET
 import math
 from typing import BinaryIO
+import urllib
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
@@ -103,7 +104,7 @@ def getTranscriptForUploadedAudio(mp3File):
 	STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
 	# TODO
 
-get_video_info()
+# get_video_info()
 
 
 @app.route('/ansh', methods=['GET'])

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, InputGroup, Checkbox } from "@blueprintjs/core";
+import { Button, InputGroup } from "@blueprintjs/core";
 
 import {
   VideoPlayer,
@@ -39,7 +39,7 @@ function App() {
   const getData = () => {
     var initialURL = document.getElementById('link').value;
     if(!validateURL(initialURL)) {
-      alert('URL is not valid!');
+      alert('URL is not valid!');   
       return;
     }
 
