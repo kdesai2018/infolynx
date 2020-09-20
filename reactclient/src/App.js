@@ -29,7 +29,7 @@ function App() {
   }
 
   // State variables for the fetch request
-  const [data, setData] = useState(null);
+  const [data, setData] = useState({});
   const [currentInfo, setCurrentInfo] = useState(defaultInfo);
 
   const validateURL = url => {
@@ -61,9 +61,13 @@ function App() {
   }
 
   const setInfo = currentTime => {
-    if(!data) return;
+    console.log(currentTime);
     var rounded = Math.round(currentTime);
-    while(!(rounded.toString() in data) && rounded > 0) rounded -= 1;
+    console.log(data);
+    while(!(rounded.toString() in data) && rounded > 0) {
+      rounded -= 1;
+    }
+    console.log(rounded);
     setCurrentInfo(rounded === 0 ? defaultInfo : data[rounded.toString()])
   }
 
@@ -72,8 +76,8 @@ function App() {
     player.playVideo();
 
     const interval = setInterval(function() {
-      console.log(player.getCurrentTime());
-      setInfo(player.getCurrentTime());
+      // console.log(player.getCurrentTime());
+      setInfo(event.target.getCurrentTime());
     }, 5000);
   }
 

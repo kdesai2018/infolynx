@@ -64,7 +64,7 @@ def get_video_info():
         # print(google_knowledge)
         if google_knowledge:
             # print('Got a word baby')
-            timed_transcript[start_time] = google_knowledge
+            timed_transcript[str(start_time)] = google_knowledge
         
     print('Done')
     # for key, val in timed_transcript.items():
