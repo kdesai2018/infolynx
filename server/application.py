@@ -9,7 +9,7 @@ from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptio
 from flask import Flask, render_template, send_file, Response, request, jsonify
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
-import smart_data_fetcher #import get_smart_data_for_keyword
+from .smart_data_fetcher import get_smart_data_for_keyword
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
@@ -41,19 +41,23 @@ def get_video_info():
     assert(tree.tag == 'transcript')
     timed_transcript = {}
 
+    print(url)
+
     for node in tree.iter('text'):
         start_time = round(float(node.attrib['start']))
         try:
             ibm_data = getKeywordsText(node.text, 1)
         except:
             continue
-
+        
+        print(ibm_data)
         if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1:
             keyword = ibm_data['keywords'][0]['text']
         else:
             continue
 
-        google_knowledge = smart_data_fetcher.get_smart_data_for_keyword(keyword)
+        google_knowledge = get_smart_data_for_keyword(keyword)
+        print(google_knowledge)
         if google_knowledge:
             timed_transcript[start_time] = google_knowledge
         
@@ -81,12 +85,13 @@ def getKeywordsURL(transcript_url):
 def getKeywordsText(text, numWords):
     #IBM Watson NLU
     try:
+        print(text)
         response = natural_language_understanding.analyze(
             text=text,
             features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
     except:
         response = None
-    # print(response)
+        print('HOLY SHIT SOMETHING WENT WRONG')
     return response
 
 
