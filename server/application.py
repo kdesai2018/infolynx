@@ -47,11 +47,11 @@ def get_video_info():
         try:
             data = getKeywordsText(node.text, 1)
             for keywords in data['keywords']:
-                    timed_transcript[start_time] = keywords["text"]
+                timed_transcript[start_time] = keywords["text"]
             for entities in data['entities']:
                 timed_transcript[start_time] = entities["text"]
         except:
-            data = None
+            continue
 
     print(timed_transcript)
 
@@ -104,7 +104,7 @@ def getTranscriptForUploadedAudio(mp3File):
 	STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
 	# TODO
 
-# get_video_info()
+get_video_info()
 
 
 @app.route('/ansh', methods=['GET'])
