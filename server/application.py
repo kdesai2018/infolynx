@@ -1,15 +1,16 @@
 import os
 import json
-import urllib.request
+#import urllib.request
 import urllib.parse as urlparse
-from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_watson import NaturalLanguageUnderstandingV1, SpeechToTextV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions, EntitiesOptions
 from flask import Flask, render_template, send_file, Response, request, jsonify
 import xml.etree.ElementTree as ET
 import math
+from typing import BinaryIO
 
-app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
+app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"), upload_folder=".")
 
 @app.route('/', methods=['GET'])
 def render_index():
@@ -77,5 +78,19 @@ def getKeywordsText(text):
 
     print(response)
     return response
+
+@app.route('/getuploadedinfo', methods=['POST'])
+def get_uploaded_video_info():
+	if "video" not in request.files:
+		return None
+	video_file = request.files["video"]
+	video_file.save(secure_filename(video_file.filename))
+
+# mp3File must come in BinaryIO format for easy upload to STT API
+def getTranscriptForUploadedAudio(mp3File):
+	authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
+	STT_service = SpeechToTextV1(authenticator=authenticator)
+	STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
+	# TODO
 
 getKeywordsText("The elephant was big and large, it has grey feet and likes George Washington. The big elephant has a pet dog.")
