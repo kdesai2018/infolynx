@@ -2,6 +2,7 @@ import os
 import json
 #import urllib.request
 import urllib.parse as urlparse
+from urllib.request import urlopen
 from ibm_watson import NaturalLanguageUnderstandingV1, SpeechToTextV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions, EntitiesOptions
@@ -13,6 +14,8 @@ from typing import BinaryIO
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
+
+UPLOADS_FOLDER = "../temp_files"
 
 @app.route('/', methods=['GET'])
 def render_index():
@@ -34,7 +37,7 @@ def get_video_info():
     transcript_url = "http://video.google.com/timedtext?lang=en&v="+video_id
     # print(transcript_url)
     #  get transcript xml sheet from transcript_url
-    transcript_response = urllib.request.urlopen(transcript_url).read()
+    transcript_response = urlopen(transcript_url).read()
     tree = ET.fromstring(transcript_response)
 
     assert(tree.tag == 'transcript')
@@ -91,20 +94,33 @@ def getKeywordsText(text, numWords):
 
 @app.route('/getuploadedinfo', methods=['POST'])
 def get_uploaded_video_info():
-	if "video" not in request.files:
-		return None
-	video_file = request.files["video"]
-	video_file.save(secure_filename(video_file.filename))
+    #request.files["video"] = f
+    if "video" not in request.files:
+        return None
+    video_file = request.files["video"]
+    #video_file = f
+    save_location = os.path.join(UPLOADS_FOLDER, video_file.filename)
+    video_file.save(save_location)
+    # Convert the mp4 to an mp3
+    mp3_filename = save_location.replace(".mp4", ".mp3")
+    os.system("ffmpeg -y -i " + save_location + " " + mp3_filename)
+    transcript = getTranscriptForUploadedAudio(mp3_filename)
+    os.remove(save_location)
+    os.remove(mp3_filename)
 
 # mp3File must come in BinaryIO format for easy upload to STT API
 def getTranscriptForUploadedAudio(mp3File):
-	authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
-	STT_service = SpeechToTextV1(authenticator=authenticator)
-	STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
-	# TODO
+    authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
+    STT_service = SpeechToTextV1(authenticator=authenticator)
+    STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
+    print ("here 4", type(mp3File))
+    with open(os.path.join(os.path.dirname('__file__'), mp3File),  'rb') as audio_file:
+        transcript = STT_service.recognize(audio=audio_file, timestamps=True).get_result()
+        print(transcript)
 
-get_video_info()
 
+# Test Runs
+#get_video_info()
 
 @app.route('/ansh', methods=['GET'])
 def get_fake_data():
