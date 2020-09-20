@@ -9,7 +9,7 @@ from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptio
 from flask import Flask, render_template, send_file, Response, request, jsonify
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
-from .smart_data_fetcher import get_smart_data_for_keyword
+from smart_data_fetcher import get_smart_data_for_keyword
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
@@ -21,19 +21,22 @@ def render_index():
     return send_file(os.path.join("../","client","index.html"))
 
 
-@app.route('/getinfo', methods=['POST'])
+@app.route('/getinfo', methods=['GET'])
 def get_video_info():
     # url contains the url string
     url = request.args['url']
+    # url = "https://www.youtube.com/watch?v=O5nskjZ_GoI&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo&t=0s&ab_channel=CrashCourse"
     
     # Get the video id
     url_data = urlparse.urlparse(url)
     query = urlparse.parse_qs(url_data.query)
     video_id = query["v"][0]
 
+    print('Began getting info')
+
     # Create URL for transcript
     transcript_url = "http://video.google.com/timedtext?lang=en&v="+video_id
-    # print(transcript_url)
+    print(transcript_url)
     #  get transcript xml sheet from transcript_url
     transcript_response = urlopen(transcript_url).read()
     tree = ET.fromstring(transcript_response)
@@ -41,7 +44,8 @@ def get_video_info():
     assert(tree.tag == 'transcript')
     timed_transcript = {}
 
-    print(url)
+    # print(url)
+    print('Just before tree thing')
 
     for node in tree.iter('text'):
         start_time = round(float(node.attrib['start']))
@@ -50,19 +54,21 @@ def get_video_info():
         except:
             continue
         
-        print(ibm_data)
-        if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1:
+        if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1 and ibm_data['keywords'][0]['relevance'] > 0.85:
+            print(ibm_data['keywords'])
             keyword = ibm_data['keywords'][0]['text']
         else:
             continue
 
         google_knowledge = get_smart_data_for_keyword(keyword)
-        print(google_knowledge)
+        # print(google_knowledge)
         if google_knowledge:
+            # print('Got a word baby')
             timed_transcript[start_time] = google_knowledge
         
-    for key, val in timed_transcript.items():
-        print(str(key) + ':' + str(val))
+    print('Done')
+    # for key, val in timed_transcript.items():
+        # print(str(key) + ':' + str(val))
     return timed_transcript
 
 def getKeywordsURL(transcript_url):
@@ -85,13 +91,13 @@ def getKeywordsURL(transcript_url):
 def getKeywordsText(text, numWords):
     #IBM Watson NLU
     try:
-        print(text)
+        # print(text)
         response = natural_language_understanding.analyze(
             text=text,
             features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
     except:
         response = None
-        print('HOLY SHIT SOMETHING WENT WRONG')
+        # print('HOLY SHIT SOMETHING WENT WRONG')
     return response
 
 
@@ -102,7 +108,7 @@ if __name__ == "__main__":
         authenticator=authenticator
     )
     natural_language_understanding.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
-    get_video_info()
+    app.run()
     # print(smart_data_fetcher.get_smart_data_for_keyword('elephant'))
 
 @app.route('/getuploadedinfo', methods=['POST'])
@@ -126,11 +132,9 @@ def getTranscriptForUploadedAudio(mp3File):
     authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
     STT_service = SpeechToTextV1(authenticator=authenticator)
     STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
-    print ("here 4", type(mp3File))
     with open(os.path.join(os.path.dirname('__file__'), mp3File),  'rb') as audio_file:
         transcript = STT_service.recognize(audio=audio_file, timestamps=True).get_result()
-        print(transcript)
-
+        return transcript
 
 @app.route('/ansh', methods=['GET'])
 def get_fake_data():

@@ -19,6 +19,7 @@ function App() {
   const [videoID, setVideoID] = useState('');
   const [notes, setNotes] = useState('');
   const [includeLink, setIncludeLink] = useState(false);
+  const [infoLoading, setInfoLoading] = useState(false);
 
   const defaultInfo = {
     "proper_name": null,
@@ -37,16 +38,18 @@ function App() {
 
   const getData = () => {
     var initialURL = document.getElementById('link').value;
+    setInfoLoading(true);
     if(!validateURL(initialURL)) {
       alert('URL is not valid!');   
       return;
     }
 
-    fetch("http://localhost:5000/ansh")
+    fetch("http://localhost:5000/getinfo?url=" + initialURL)
     .then(res => res.json())
     .then(
       (result) => {
         console.log(result);
+        setInfoLoading(false);
         setData(result);
       }
     )
@@ -69,7 +72,7 @@ function App() {
     player.playVideo();
 
     const interval = setInterval(function() {
-      // console.log(player.getCurrentTime());
+      console.log(player.getCurrentTime());
       setInfo(player.getCurrentTime());
     }, 5000);
   }
@@ -140,6 +143,7 @@ function App() {
         <h2>Information</h2>
         <InfoWindow
           info={currentInfo}
+          loading={infoLoading}
         />
         { currentInfo['proper_name'] ? (
           <Row>
