@@ -32,8 +32,7 @@ function App() {
   const [currentInfo, setCurrentInfo] = useState(defaultInfo);
 
   const validateURL = url => {
-    if(!url.includes("youtube.com/watch?v=")) { return false; }
-    return true;
+    return url.includes("youtube.com/watch?v=");
   }
 
   const getData = () => {
@@ -54,20 +53,15 @@ function App() {
 
     initialURL = initialURL.substr(initialURL.indexOf('v=')+2);
     var id = initialURL.substr(0, initialURL.indexOf('&'));
-    console.log(id);
+    // console.log(id);
     setVideoID(id);
   }
 
   const setInfo = currentTime => {
+    if(!data) return;
     var rounded = Math.round(currentTime);
-    while(!(rounded.toString() in data) && rounded > 0) {
-      rounded -= 1;
-    }
-    if(rounded == 0) {
-      setCurrentInfo(defaultInfo);
-    } else {
-      setCurrentInfo(data[rounded.toString()]);
-    }
+    while(!(rounded.toString() in data) && rounded > 0) rounded -= 1;
+    setCurrentInfo(rounded === 0 ? defaultInfo : data[rounded.toString()])
   }
 
   const onPlayerReady = event => {
@@ -75,8 +69,7 @@ function App() {
     player.playVideo();
 
     const interval = setInterval(function() {
-      console.log(player.getCurrentTime());
-      // Use the timestamp dictionary to change information view
+      // console.log(player.getCurrentTime());
       setInfo(player.getCurrentTime());
     }, 5000);
   }
