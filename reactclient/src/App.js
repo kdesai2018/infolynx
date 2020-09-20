@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, InputGroup, Classes } from "@blueprintjs/core";
+import { Button, InputGroup } from "@blueprintjs/core";
 
 import {
   VideoPlayer,
@@ -9,30 +9,59 @@ import {
   InfoWindow,
   NoteWindow,
   Row,
-  SaveButton
-} from './styles';
+  SaveButton,
+  ExportButton,
+  Setting,
+} from './AppStyles';
 
 function App() {
 
   const [videoID, setVideoID] = useState('');
   const [notes, setNotes] = useState('');
+  const [includeLink, setIncludeLink] = useState(false);
+
+  const defaultInfo = {
+    "proper_name": null,
+    "what_is_term": null,
+    "description": null,
+    "wikipedia_link": null,
+  }
+
+  // State variables for the fetch request
+  const [data, setData] = useState(null);
+  const [currentInfo, setCurrentInfo] = useState(defaultInfo);
 
   const validateURL = url => {
-    if(!url.includes("youtube.com/watch?v=")) { return false; }
-    return true;
+    return url.includes("youtube.com/watch?v=");
   }
 
   const getData = () => {
     var initialURL = document.getElementById('link').value;
     if(!validateURL(initialURL)) {
-      alert('URL is not valid!');
+      alert('URL is not valid!');   
       return;
     }
 
+    fetch("http://localhost:5000/ansh")
+    .then(res => res.json())
+    .then(
+      (result) => {
+        console.log(result);
+        setData(result);
+      }
+    )
+
     initialURL = initialURL.substr(initialURL.indexOf('v=')+2);
     var id = initialURL.substr(0, initialURL.indexOf('&'));
-    console.log(id);
+    // console.log(id);
     setVideoID(id);
+  }
+
+  const setInfo = currentTime => {
+    if(!data) return;
+    var rounded = Math.round(currentTime);
+    while(!(rounded.toString() in data) && rounded > 0) rounded -= 1;
+    setCurrentInfo(rounded === 0 ? defaultInfo : data[rounded.toString()])
   }
 
   const onPlayerReady = event => {
@@ -40,9 +69,13 @@ function App() {
     player.playVideo();
 
     const interval = setInterval(function() {
-      console.log(player.getCurrentTime());
-      // Use the timestamp dictionary to change information view
+      // console.log(player.getCurrentTime());
+      setInfo(player.getCurrentTime());
     }, 5000);
+  }
+
+  const onStateChange = event => {
+    setInfo(event.target.getCurrentTime());
   }
 
   const PlayButton = (
@@ -66,6 +99,27 @@ function App() {
     downloadLink.click();
   }
 
+  function getNewNotes(notes) {
+    var newNotes = notes + '\n' + currentInfo['proper_name'];
+    if(currentInfo['what_is_term']) {
+      newNotes += '- ' + currentInfo['what_is_term'];
+    }
+    if(currentInfo['description']) {
+      newNotes += '\n\n' + currentInfo['description']
+    }
+    if(includeLink) {
+      newNotes += '\n\n' + currentInfo['wikipedia_link'];
+    }
+    newNotes += '\n'
+    return newNotes;
+  }
+
+  const addToNotes = () => {
+    const newNotes = getNewNotes(notes);
+    document.getElementById('textArea').innerHTML = newNotes;
+    setNotes(newNotes);
+  }
+
   return (
     <Row>
       <MainDiv>
@@ -76,6 +130,7 @@ function App() {
             <VideoPlayer 
               videoId={videoID}
               onReady={onPlayerReady}
+              onStateChange={onStateChange}
             />
           ) : null }
         </VideoWrapper>
@@ -83,8 +138,17 @@ function App() {
       </MainDiv>
       <SideDiv>
         <h2>Information</h2>
-        <InfoWindow>Information</InfoWindow>
-        <p>Some text about me in culpa qui officia deserunt mollit anim..</p>
+        <InfoWindow
+          info={currentInfo}
+        />
+        { currentInfo['proper_name'] ? (
+          <Row>
+            <ExportButton intent="primary" onClick={addToNotes} text="Add to Notes" />
+            { currentInfo['wikipedia_link'] ? (
+              <Setting checked={includeLink} onChange={() => setIncludeLink(!includeLink)} label="Include Link" />
+            ): null}
+          </Row>
+        ) : null }
         <h2>Notes</h2>
         <NoteWindow onChange={event => {setNotes(event.target.value);}} placeholder="Take notes here!" id="textArea"></NoteWindow>
         <SaveButton onClick={saveTextAsFile} text="Save" intent="success"/>
