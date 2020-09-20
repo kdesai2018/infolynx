@@ -1,6 +1,10 @@
 import urllib
+<<<<<<< HEAD
+# import urllib2
+=======
 from urllib.request import urlopen, URLError
 from urllib.parse import urlencode
+>>>>>>> 7121ca1cd885b56d86d55893e69eac61b3ae4602
 import json
 
 PROJECT_API_KEY = "AIzaSyCUukdto15Ad2PYZhlIVUSqQLUnqLYWti8"
@@ -10,8 +14,13 @@ CONFIDENCE_THRESHOLD = 500.0
 
 def make_kg_query(GET_request, keyword, printing=False):
 	try:
+<<<<<<< HEAD
+		json_response = urllib.request.urlopen(GET_request)
+	except urllib.URLError as e:
+=======
 		json_response = urlopen(GET_request)
 	except URLError as e:
+>>>>>>> 7121ca1cd885b56d86d55893e69eac61b3ae4602
 		if hasattr(e, "reason"):
 			print(" !! Failed to reach a server !!")
 			print(" Reason:", e.reason)
@@ -67,7 +76,11 @@ def make_kg_query(GET_request, keyword, printing=False):
 # =====================================================================================
 def get_smart_data_for_keyword(keyword, entity_types=[], printing=False):
 	params = {"query" : keyword, "limit" : RESULTS_LIMIT, "key" : PROJECT_API_KEY}
+<<<<<<< HEAD
+	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.parse.urlencode(params)
+=======
 	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urlencode(params)
+>>>>>>> 7121ca1cd885b56d86d55893e69eac61b3ae4602
 	typed_request = GET_request
 	for e_type in entity_types:
 		typed_request += "&types=" + e_type
@@ -83,7 +96,11 @@ test_terms = []
 test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "couple layers"]
 for term in test_terms:
 	get_smart_data_for_keyword(term, printing=True)
+<<<<<<< HEAD
+	# print "\n"
+=======
 	print()
+>>>>>>> 7121ca1cd885b56d86d55893e69eac61b3ae4602
 
 # Test entity_types list for improved results
 #get_smart_data_for_keyword("george washington carver", ["Person"], printing=True)
