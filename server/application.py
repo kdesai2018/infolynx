@@ -61,7 +61,9 @@ def get_video_info():
         if ibm_data and 'entities' in ibm_data and len(ibm_data['entities'])>=1:
             keyword = ibm_data['entities'][0]['text']
 
-        if not keyword:
+        if keyword:
+            keyword.lower()
+        else:
             continue
 
         if keyword in keyword_cache:
