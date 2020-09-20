@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import YouTube from 'react-youtube';
-import { TextArea, Button, Checkbox } from '@blueprintjs/core';
+import { Button, Checkbox } from '@blueprintjs/core';
 import InfoCard from './InfoCard';
 
 
@@ -30,7 +30,7 @@ const InfoWindow = styled(InfoCard)`
   height: 20vh;
 `;
 
-const NoteWindow = styled(TextArea)`
+const NoteWindow = styled.textarea`
   width: 30vw;
   resize: vertical; 
   min-height: 225px;

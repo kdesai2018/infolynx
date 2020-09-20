@@ -137,3 +137,32 @@ def getTranscriptForUploadedAudio(mp3File):
         transcript = STT_service.recognize(audio=audio_file, timestamps=True).get_result()
         print(transcript)
 
+
+@app.route('/ansh', methods=['GET'])
+def get_fake_data():
+    # Fake data function for use by the man, the myth, the legend
+    fake_dict = {
+        4 : {
+            "proper_name": "French Revolution",
+            "what_is_term": "Event",
+            "description": "Period of social and political upheaval in France in 1789-1799"
+        },
+        9 : {
+            "proper_name": "Donuts",
+            "what_is_term": "Food",
+            "description": "Probably one of the best foods ever made"
+        },
+        16 : {
+            "proper_name": "Xenoblade Chronicles",
+            "what_is_term": "Video Game",
+            "wikipedia_link": "http://gamebot2.com"
+        },
+        7200 : {
+            "proper_name": "Hyrule Warriors",
+            "what_is_term": "Video Game",
+            "wikipedia_link": "http://google.com",
+            "image_url": "https://www.imore.com/sites/imore.com/files/styles/large/public/field/image/2020/09/hyrule-warriors-age-of-calamity-champions.jpg"
+        }
+    }
+
+    return jsonify(fake_dict)

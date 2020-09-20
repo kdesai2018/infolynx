@@ -1,9 +1,11 @@
 import React from 'react';
-import { Card } from '@blueprintjs/core';
 
 import {
   TitleText,
   ObjectText,
+  Row,
+  SquareImg,
+  InformationCard,
 } from './InfoStyles';
 
 function InfoCard(props) {
@@ -12,18 +14,29 @@ function InfoCard(props) {
     proper_name,
     what_is_term,
     description,
-    wikipedia_link 
+    wikipedia_link,
+    image_url
   } = props.info;  
 
   return (
-    <Card>
-        <TitleText>{proper_name}</TitleText>
-        <ObjectText>{what_is_term}</ObjectText>
-        <p>{description}</p>
-        {wikipedia_link ? (
-          <a href={wikipedia_link} target="_blank">Wikipedia</a>
-        ): null}
-    </Card>
+    <InformationCard>
+      <Row>
+        <div>
+          <TitleText>{proper_name}</TitleText>
+          <ObjectText>{what_is_term}</ObjectText>
+          <p>{description}</p>
+          {wikipedia_link ? (
+            <>
+              <a href={wikipedia_link} target="_blank">Wikipedia</a>
+              <br />
+            </>
+          ): null}
+          { image_url ? (
+            <SquareImg src={image_url}/>
+          ) : null }    
+        </div>  
+      </Row>
+    </InformationCard>
   );
 }
 

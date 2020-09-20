@@ -107,7 +107,7 @@ function App() {
     if(currentInfo['description']) {
       newNotes += '\n\n' + currentInfo['description']
     }
-    if(includeLink) {
+    if(includeLink && currentInfo['wikipedia_link']) {
       newNotes += '\n\n' + currentInfo['wikipedia_link'];
     }
     newNotes += '\n'
@@ -116,7 +116,7 @@ function App() {
 
   const addToNotes = () => {
     const newNotes = getNewNotes(notes);
-    document.getElementById('textArea').innerHTML = newNotes;
+    document.getElementById('textArea').value = newNotes;
     setNotes(newNotes);
   }
 
