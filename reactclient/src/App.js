@@ -20,6 +20,7 @@ function App() {
   const [notes, setNotes] = useState('');
   const [includeLink, setIncludeLink] = useState(false);
   const [infoLoading, setInfoLoading] = useState(false);
+  var isPaused = false;
 
   const defaultInfo = {
     "proper_name": null,
@@ -44,10 +45,9 @@ function App() {
       return;
     }
 
-    fetch("http://localhost:5000/getinfo?url=" + initialURL)
+    fetch("http://localhost:5000/getinfo?url="+initialURL)
     .then(res => res.json())
-    .then(
-      (result) => {
+    .then(result => {
         console.log(result);
         setInfoLoading(false);
         setData(result);
@@ -56,18 +56,14 @@ function App() {
 
     initialURL = initialURL.substr(initialURL.indexOf('v=')+2);
     var id = initialURL.substr(0, initialURL.indexOf('&'));
-    // console.log(id);
     setVideoID(id);
   }
 
   const setInfo = currentTime => {
-    console.log(currentTime);
     var rounded = Math.round(currentTime);
-    console.log(data);
     while(!(rounded.toString() in data) && rounded > 0) {
       rounded -= 1;
     }
-    console.log(rounded);
     setCurrentInfo(rounded === 0 ? defaultInfo : data[rounded.toString()])
   }
 
@@ -75,9 +71,8 @@ function App() {
     var player = event.target;
     player.playVideo();
 
-    const interval = setInterval(function() {
-      // console.log(player.getCurrentTime());
-      setInfo(event.target.getCurrentTime());
+    setInterval(() => {
+      player.seekTo(player.getCurrentTime()-.01);
     }, 5000);
   }
 
@@ -130,7 +125,7 @@ function App() {
   return (
     <Row>
       <MainDiv>
-        <h2>Welcome to the Magic Zoom Bus!</h2>
+        <h2>Welcome to InfoLynx!</h2>
         <InputGroup id="link" placeholder="Enter YouTube URL!" fill={false} rightElement={PlayButton}/>
         <VideoWrapper>
           { videoID ? (

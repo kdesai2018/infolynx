@@ -69,7 +69,7 @@ def get_video_info():
     print('Done')
     # for key, val in timed_transcript.items():
         # print(str(key) + ':' + str(val))
-    return timed_transcript
+    return jsonify(timed_transcript)
 
 def getKeywordsURL(transcript_url):
     #IBM Watson NLU
@@ -100,17 +100,6 @@ def getKeywordsText(text, numWords):
         # print('HOLY SHIT SOMETHING WENT WRONG')
     return response
 
-
-if __name__ == "__main__":
-    authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
-    natural_language_understanding = NaturalLanguageUnderstandingV1(
-        version='2020-08-01',
-        authenticator=authenticator
-    )
-    natural_language_understanding.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
-    app.run()
-    # print(smart_data_fetcher.get_smart_data_for_keyword('elephant'))
-
 @app.route('/getuploadedinfo', methods=['POST'])
 def get_uploaded_video_info():
     #request.files["video"] = f
@@ -140,28 +129,16 @@ def getTranscriptForUploadedAudio(mp3File):
 @app.route('/ansh', methods=['GET'])
 def get_fake_data():
     # Fake data function for use by the man, the myth, the legend
-    fake_dict = {
-        4 : {
-            "proper_name": "French Revolution",
-            "what_is_term": "Event",
-            "description": "Period of social and political upheaval in France in 1789-1799"
-        },
-        9 : {
-            "proper_name": "Donuts",
-            "what_is_term": "Food",
-            "description": "Probably one of the best foods ever made"
-        },
-        16 : {
-            "proper_name": "Xenoblade Chronicles",
-            "what_is_term": "Video Game",
-            "wikipedia_link": "http://gamebot2.com"
-        },
-        7200 : {
-            "proper_name": "Hyrule Warriors",
-            "what_is_term": "Video Game",
-            "wikipedia_link": "http://google.com",
-            "image_url": "https://www.imore.com/sites/imore.com/files/styles/large/public/field/image/2020/09/hyrule-warriors-age-of-calamity-champions.jpg"
-        }
-    }
+    fake_dict = {"0":{"description":"A game is a structured form of play, usually undertaken for entertainment or fun, and sometimes used as an educational tool. Games are distinct from work, which is usually carried out for remuneration, and from art, which is more often an expression of aesthetic or ideological elements. ","image_url":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5oLxa1DYPiVr1CuEVxpq7zDMWpJU47uky001jj4W3i0wsP8J9","proper_name":"Game","wikipedia_link":"https://en.wikipedia.org/wiki/Game"},"106":{"description":"A devil is the personification of evil as it is conceived in many and various cultures and religious traditions. It is seen as the objectification of a hostile and destructive force.\n","image_url":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBStSjcYpxDGjzgyD_GLFNVMD9yfI0IgPKsUccVqt5fvQr06O6","proper_name":"Devil","wikipedia_link":"https://en.wikipedia.org/wiki/Devil"},"117":{"description":"An angel is a supernatural being in various Circum-Mediterranean religions. Abrahamic religions often depict them as benevolent celestial intermediaries between God and humanity. Other roles include protectors and guides for humans, and servants of God. ","image_url":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcUp-gOnAob1JBySBdiNlzOFWh5Lwp42GxxGmZgkj2NYBFXzA9","proper_name":"Angel","wikipedia_link":"https://en.wikipedia.org/wiki/Angel"},"122":{"description":"A devil is the personification of evil as it is conceived in many and various cultures and religious traditions. It is seen as the objectification of a hostile and destructive force.\n","image_url":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBStSjcYpxDGjzgyD_GLFNVMD9yfI0IgPKsUccVqt5fvQr06O6","proper_name":"Devil","wikipedia_link":"https://en.wikipedia.org/wiki/Devil"},"167":{"description":"In science and mathematics, an open problem or an open question is a known problem which can be accurately stated, and which is assumed to have an objective and verifiable solution, but which has not yet been solved.\n","proper_name":"Open problem","wikipedia_link":"https://en.wikipedia.org/wiki/Open_problem"},"206":{"description":"Thanksgiving Day is a national holiday celebrated on various dates in the United States, Canada, Brazil, Grenada, Saint Lucia, and Liberia, and the sub-national entities Leiden, Norfolk Island, and Puerto Rico. ","image_url":"https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRsw5mK1DrbsDyExksmgeYsIohmtKLkgbc4m2x1q0oxiO43XEv2","proper_name":"Thanksgiving","what_is_term":"Holiday","wikipedia_link":"https://en.wikipedia.org/wiki/Thanksgiving"},"22":{"description":"An angel is a supernatural being in various Circum-Mediterranean religions. Abrahamic religions often depict them as benevolent celestial intermediaries between God and humanity. Other roles include protectors and guides for humans, and servants of God. ","image_url":"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcUp-gOnAob1JBySBdiNlzOFWh5Lwp42GxxGmZgkj2NYBFXzA9","proper_name":"Angel","wikipedia_link":"https://en.wikipedia.org/wiki/Angel"},"45":{"description":"Intuition is the ability to acquire knowledge without recourse to conscious reasoning. Different fields use the word \"intuition\" in very different ways, including but not limited to: direct access to unconscious knowledge; unconscious cognition; inner sensing; inner insight to unconscious pattern-recognition; and the ability to understand something instinctively, without any need for conscious reasoning.\n","proper_name":"Intuition","wikipedia_link":"https://en.wikipedia.org/wiki/Intuition"},"65":{"description":"The Thing is a fictional superhero appearing in American comic books published by Marvel Comics. The character is a founding member of the Fantastic Four. ","proper_name":"Thing","what_is_term":"Fictional superhero","wikipedia_link":"https://en.wikipedia.org/wiki/Thing_(comics)"},"71":{"description":"Proofreading is the reading of a galley proof or an electronic copy of a publication to find and correct production errors of text or art. Proofreading is the final step in the editorial cycle before publication.","proper_name":"Proofreading","wikipedia_link":"https://en.wikipedia.org/wiki/Proofreading"},"90":{"description":"A fact is an occurrence in the real world. For example, \"This sentence contains words.\" is a linguistic fact, and \"The sun is a star.\" is an astronomical fact. ","proper_name":"Fact","wikipedia_link":"https://en.wikipedia.org/wiki/Fact"}}
 
     return jsonify(fake_dict)
+
+if __name__ == "__main__":
+    authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
+    natural_language_understanding = NaturalLanguageUnderstandingV1(
+        version='2020-08-01',
+        authenticator=authenticator
+    )
+    natural_language_understanding.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
+    app.run()
+    # print(smart_data_fetcher.get_smart_data_for_keyword('elephant'))
