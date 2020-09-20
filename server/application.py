@@ -6,10 +6,12 @@ from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptions, EntitiesOptions
 from flask import Flask, render_template, send_file, Response, request, jsonify
+from flask_cors import CORS
 import xml.etree.ElementTree as ET
 import math
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def render_index():
@@ -79,3 +81,27 @@ def getKeywordsText(text, numWords):
 
     print(response)
     return response
+
+
+@app.route('/ansh', methods=['GET'])
+def get_fake_data():
+    # Fake data function for use by the man, the myth, the legend
+    fake_dict = {
+        4 : {
+            "proper_name": "French Revolution",
+            "what_is_term": "Event",
+            "description": "Period of social and political upheaval in France in 1789-1799"
+        },
+        9 : {
+            "proper_name": "Donuts",
+            "what_is_term": "Food",
+            "description": "Probably one of the best foods ever made"
+        },
+        16 : {
+            "proper_name": "Xenoblade Chronicles",
+            "what_is_term": "Video Game",
+            "wikipedia_link": "http://gamebot2.com"
+        }
+    }
+
+    return jsonify(fake_dict)

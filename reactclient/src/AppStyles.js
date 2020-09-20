@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import YouTube from 'react-youtube';
-import { TextArea, Button } from '@blueprintjs/core';
+import { TextArea, Button, Checkbox } from '@blueprintjs/core';
+import InfoCard from './InfoCard';
+
 
 const VideoPlayer = styled(YouTube)`
     height: 75vh;
@@ -24,7 +26,7 @@ const MainDiv = styled.div`
   padding: 20px;
 `;
 
-const InfoWindow = styled.div`
+const InfoWindow = styled(InfoCard)`
   height: 20vh;
 `;
 
@@ -44,6 +46,14 @@ const SaveButton = styled(Button)`
   margin: 10px 2px;
 `;
 
+const ExportButton = styled(Button)`
+  margin: 10px 2px;
+`;
+
+const Setting = styled(Checkbox)`
+  margin: 15px 4px;
+`;
+
 export { 
   VideoPlayer, 
   VideoWrapper,
@@ -53,4 +63,6 @@ export {
   NoteWindow,
   Row,
   SaveButton,
+  ExportButton,
+  Setting,
 }
