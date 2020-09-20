@@ -1,5 +1,5 @@
 import urllib
-import urllib2
+# import urllib2
 import json
 
 PROJECT_API_KEY = "AIzaSyCUukdto15Ad2PYZhlIVUSqQLUnqLYWti8"
@@ -9,8 +9,8 @@ CONFIDENCE_THRESHOLD = 500.0
 
 def make_kg_query(GET_request, keyword, printing=False):
 	try:
-		json_response = urllib2.urlopen(GET_request)
-	except urllib2.URLError as e:
+		json_response = urllib.request.urlopen(GET_request)
+	except urllib.URLError as e:
 		if hasattr(e, "reason"):
 			print(" !! Failed to reach a server !!")
 			print(" Reason:", e.reason)
@@ -23,9 +23,9 @@ def make_kg_query(GET_request, keyword, printing=False):
 		try:
 			item_list = structured_response["itemListElement"]
 			if printing:
-				print "keyword:", keyword
-				print "num results:", len(item_list)
-				print "conf:", item_list[0]["resultScore"]
+				print("keyword:", keyword)
+				print("num results:", len(item_list))
+				print("conf:", item_list[0]["resultScore"])
 			if len(item_list) > 0 and item_list[0]["resultScore"] > CONFIDENCE_THRESHOLD:
 				smart_data = {}
 				top_results = item_list[0]["result"]
@@ -38,7 +38,7 @@ def make_kg_query(GET_request, keyword, printing=False):
 					smart_data["description"] = top_results["detailedDescription"]["articleBody"]
 					smart_data["wikipedia_link"] = top_results["detailedDescription"]["url"]
 				if printing:
-					print smart_data
+					print(smart_data)
 				return smart_data
 		except Exception as e:
 			print(" JSON Parsing Error: required data field missing ")
@@ -66,7 +66,7 @@ def make_kg_query(GET_request, keyword, printing=False):
 # =====================================================================================
 def get_smart_data_for_keyword(keyword, entity_types=[], printing=False):
 	params = {"query" : keyword, "limit" : RESULTS_LIMIT, "key" : PROJECT_API_KEY}
-	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.urlencode(params)
+	GET_request = KNOWLEDGE_GRAPH_URL + "?" + urllib.parse.urlencode(params)
 	typed_request = GET_request
 	for e_type in entity_types:
 		typed_request += "&types=" + e_type
@@ -82,7 +82,7 @@ test_terms = []
 #test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "couple layers"]
 for term in test_terms:
 	get_smart_data_for_keyword(term, printing=True)
-	print ""
+	# print "\n"
 
 # Test entity_types list for improved results
 #get_smart_data_for_keyword("george washington carver", ["Person"], printing=True)
