@@ -43,6 +43,7 @@ def get_video_info():
 
     assert(tree.tag == 'transcript')
     timed_transcript = {}
+    keyword_cache = {}
 
     # print(url)
     print('Just before tree thing')
@@ -59,12 +60,16 @@ def get_video_info():
             keyword = ibm_data['keywords'][0]['text']
         else:
             continue
-
-        google_knowledge = get_smart_data_for_keyword(keyword)
-        # print(google_knowledge)
-        if google_knowledge:
-            # print('Got a word baby')
-            timed_transcript[start_time] = google_knowledge
+        
+        if keyword in keyword_cache:
+            timed_transcript[start_time] = keyword_cache[keyword]
+        else:
+            google_knowledge = get_smart_data_for_keyword(keyword)
+            # print(google_knowledge)
+            if google_knowledge:
+                # print('Got a word baby')
+                timed_transcript[start_time] = google_knowledge
+                keyword_cache[keyword] = google_knowledge
         
     print('Done')
     # for key, val in timed_transcript.items():
