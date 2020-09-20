@@ -11,12 +11,8 @@ import xml.etree.ElementTree as ET
 import math
 from typing import BinaryIO
 
-<<<<<<< HEAD
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
-=======
-app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"), upload_folder=".")
->>>>>>> 26ba9ea20727c352cdb0468c066489452fa5a1eb
 
 @app.route('/', methods=['GET'])
 def render_index():
