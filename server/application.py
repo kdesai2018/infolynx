@@ -58,6 +58,7 @@ def get_video_info():
         if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1 and ibm_data['keywords'][0]['relevance'] > 0.85:
             print(ibm_data['keywords'])
             keyword = ibm_data['keywords'][0]['text']
+            keyword.lower()
         else:
             continue
         
