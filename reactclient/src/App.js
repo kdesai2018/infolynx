@@ -12,6 +12,7 @@ import {
   SaveButton,
   ExportButton,
   Setting,
+  Logo,
 } from './AppStyles';
 
 function App() {
@@ -20,7 +21,6 @@ function App() {
   const [notes, setNotes] = useState('');
   const [includeLink, setIncludeLink] = useState(false);
   const [infoLoading, setInfoLoading] = useState(false);
-  var isPaused = false;
 
   const defaultInfo = {
     "proper_name": null,
@@ -126,6 +126,7 @@ function App() {
     <Row>
       <MainDiv>
         <h2>Welcome to InfoLynx!</h2>
+        <Logo src="https://anshjainpublic.s3.us-east-2.amazonaws.com/InfoLynx.jpg" />
         <InputGroup id="link" placeholder="Enter YouTube URL!" fill={false} rightElement={PlayButton}/>
         <VideoWrapper>
           { videoID ? (

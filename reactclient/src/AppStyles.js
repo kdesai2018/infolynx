@@ -33,13 +33,14 @@ const InfoWindow = styled(InfoCard)`
 const NoteWindow = styled.textarea`
   width: 30vw;
   resize: vertical; 
-  min-height: 225px;
+  min-height: 200px;
   max-height: 325px;
 `;
 
 const Row = styled.div`
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
 `;
 
 const SaveButton = styled(Button)`
@@ -54,6 +55,18 @@ const Setting = styled(Checkbox)`
   margin: 15px 4px;
 `;
 
+const Logo = styled.img`
+  height: 80px;
+  width: 80px;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+`;
+
+const Title = styled.h2`
+  margin-left: 10px;
+`;
+
 export { 
   VideoPlayer, 
   VideoWrapper,
@@ -65,4 +78,6 @@ export {
   SaveButton,
   ExportButton,
   Setting,
+  Logo,
+  Title,
 }
