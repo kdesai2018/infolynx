@@ -9,8 +9,7 @@ from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptio
 from flask import Flask, render_template, send_file, Response, request, jsonify
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
-# from start_data_fetcher import get_smart_data_for_keyword
-import smart_data_fetcher
+from .smart_data_fetcher import get_smart_data_for_keyword
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
@@ -64,7 +63,7 @@ def get_video_info():
             continue
 
         print('keyword', keyword)
-        google_knowledge = smart_data_fetcher.get_smart_data_for_keyword(keyword)
+        google_knowledge = get_smart_data_for_keyword(keyword)
         print(google_knowledge)
         timed_transcript[start_time] = google_knowledge
 
