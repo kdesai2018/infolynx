@@ -79,11 +79,11 @@ def get_smart_data_for_keyword(keyword, entity_types=[], printing=False):
 
 
 # Testing with different keywords
-test_terms = []
-test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "couple layers"]
-for term in test_terms:
-	get_smart_data_for_keyword(term, printing=True)
-	print()
+# test_terms = []
+# test_terms = ["mitosis", "halloween", "george washington carver", "french revolution", "couple layers"]
+# for term in test_terms:
+# 	get_smart_data_for_keyword(term, printing=True)
+# 	print()
 
 # Test entity_types list for improved results
 #get_smart_data_for_keyword("george washington carver", ["Person"], printing=True)

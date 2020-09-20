@@ -9,7 +9,7 @@ from ibm_watson.natural_language_understanding_v1 import Features, KeywordsOptio
 from flask import Flask, render_template, send_file, Response, request, jsonify
 from flask_cors import CORS
 import xml.etree.ElementTree as ET
-from .smart_data_fetcher import get_smart_data_for_keyword
+import smart_data_fetcher #import get_smart_data_for_keyword
 
 app = Flask(__name__, static_url_path='/static', static_folder=os.path.join("../","client","static"))
 CORS(app)
@@ -24,8 +24,7 @@ def render_index():
 @app.route('/getinfo', methods=['POST'])
 def get_video_info():
     # url contains the url string
-    # url = request.args['url']
-    url = 'https://www.youtube.com/watch?v=3yLXNzDUH58'
+    url = request.args['url']
     
     # Get the video id
     url_data = urlparse.urlparse(url)
@@ -47,29 +46,19 @@ def get_video_info():
         try:
             ibm_data = getKeywordsText(node.text, 1)
         except:
-            timed_transcript[start_time] = None
             continue
-        # if ibm_data == None:
-        #     timed_transcript[start_time] = None
-        #     continue
 
-        print('test', node.text)
-        print('ibm_data:', ibm_data)
-
-        if ibm_data and 'keywords' in ibm_data:
+        if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1:
             keyword = ibm_data['keywords'][0]['text']
         else:
-            timed_transcript[start_time] = None
             continue
 
-        print('keyword', keyword)
-        google_knowledge = get_smart_data_for_keyword(keyword)
-        print(google_knowledge)
-        timed_transcript[start_time] = google_knowledge
-
-        # except:
-        #     timed_transcript[start_time] = None
+        google_knowledge = smart_data_fetcher.get_smart_data_for_keyword(keyword)
+        if google_knowledge:
+            timed_transcript[start_time] = google_knowledge
         
+    for key, val in timed_transcript.items():
+        print(str(key) + ':' + str(val))
     return timed_transcript
 
 def getKeywordsURL(transcript_url):
@@ -108,7 +97,7 @@ if __name__ == "__main__":
         authenticator=authenticator
     )
     natural_language_understanding.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
-    print(get_video_info())
+    get_video_info()
     # print(smart_data_fetcher.get_smart_data_for_keyword('elephant'))
 
 @app.route('/getuploadedinfo', methods=['POST'])
