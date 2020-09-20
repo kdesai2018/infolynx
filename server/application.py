@@ -126,10 +126,11 @@ def get_uploaded_video_info():
     transcript = getTranscriptForUploadedAudio(mp3_filename)
     os.remove(save_location)
     os.remove(mp3_filename)
+    return "goodbye"
 
 # mp3File must come in BinaryIO format for easy upload to STT API
 def getTranscriptForUploadedAudio(mp3File):
-    authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
+    authenticator = IAMAuthenticator('JNJkBoGNQKYihv3CPqXMtuKlgAVQcFrunct_mV2Yv4cx')
     STT_service = SpeechToTextV1(authenticator=authenticator)
     STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
     with open(os.path.join(os.path.dirname('__file__'), mp3File),  'rb') as audio_file:
