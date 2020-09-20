@@ -58,13 +58,13 @@ const Setting = styled(Checkbox)`
 const Logo = styled.img`
   height: 80px;
   width: 80px;
-  position: fixed;
-  top: 10px;
-  right: 10px;
+  display: inline-block;
 `;
 
 const Title = styled.h2`
-  margin-left: 10px;
+  display: inline-block;
+  position: relative;
+  bottom: 25px;
 `;
 
 export { 

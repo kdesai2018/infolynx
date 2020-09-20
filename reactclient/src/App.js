@@ -13,6 +13,7 @@ import {
   ExportButton,
   Setting,
   Logo,
+  Title
 } from './AppStyles';
 
 function App() {
@@ -125,8 +126,10 @@ function App() {
   return (
     <Row>
       <MainDiv>
-        <h2>Welcome to InfoLynx!</h2>
-        <Logo src="https://anshjainpublic.s3.us-east-2.amazonaws.com/InfoLynx.jpg" />
+        <div>
+          <Logo src="https://anshjainpublic.s3.us-east-2.amazonaws.com/InfoLynx.jpg" />
+          <Title>Welcome to InfoLynx!</Title>
+        </div>
         <InputGroup id="link" placeholder="Enter YouTube URL!" fill={false} rightElement={PlayButton}/>
         <VideoWrapper>
           { videoID ? (
