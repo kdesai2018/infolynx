@@ -58,9 +58,12 @@ def get_video_info():
         if ibm_data and 'keywords' in ibm_data and len(ibm_data['keywords'])>=1 and ibm_data['keywords'][0]['relevance'] > 0.85:
             print(ibm_data['keywords'])
             keyword = ibm_data['keywords'][0]['text']
-        else:
+        if ibm_data and 'entities' in ibm_data and len(ibm_data['entities'])>=1:
+            keyword = ibm_data['entities'][0]['text']
+
+        if not keyword:
             continue
-        
+
         if keyword in keyword_cache:
             timed_transcript[start_time] = keyword_cache[keyword]
         else:
