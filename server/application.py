@@ -22,6 +22,7 @@ def get_video_info():
     # url contains the url string
     # url = request.args['url']
     url = 'https://www.youtube.com/watch?v=3yLXNzDUH58'
+    
     # Get the video id
     url_data = urlparse.urlparse(url)
     query = urlparse.parse_qs(url_data.query)
@@ -29,7 +30,7 @@ def get_video_info():
 
     # Create URL for transcript
     transcript_url = "http://video.google.com/timedtext?lang=en&v="+video_id
-    print(transcript_url)
+    # print(transcript_url)
     #  get transcript xml sheet from transcript_url
     transcript_response = urllib.request.urlopen(transcript_url).read()
     tree = ET.fromstring(transcript_response)
@@ -38,13 +39,20 @@ def get_video_info():
     timed_transcript = {}
 
     for node in tree.iter('text'):
-        print(node.attrib)
         start_time = round(float(node.attrib['start']))
-        timed_transcript[start_time] = node.text
+        # print(node.text)
+        try:
+            data = getKeywordsText(node.text, 1)
+            for keywords in data['keywords']:
+                    timed_transcript[start_time] = keywords["text"]
+            for entities in data['entities']:
+                timed_transcript[start_time] = entities["text"]
+        except:
+            data = None
 
     print(timed_transcript)
 
-    return getKeywordsURL(transcript_url)
+    return timed_transcript
 
 def getKeywordsURL(transcript_url):
     #IBM Watson NLU
@@ -58,11 +66,11 @@ def getKeywordsURL(transcript_url):
 
     response = natural_language_understanding.analyze(
         url=transcript_url,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=1), entities=EntitiesOptions(sentiment=False,limit=1))).get_result()
 
     return response
 
-def getKeywordsText(text):
+def getKeywordsText(text, numWords):
     #IBM Watson NLU
     authenticator = IAMAuthenticator('TWS446L2CH4Zxnrh-nwh3T2g8stRlB08e4iyjAKyBHg0')
     natural_language_understanding = NaturalLanguageUnderstandingV1(
@@ -74,9 +82,9 @@ def getKeywordsText(text):
 
     response = natural_language_understanding.analyze(
         text=text,
-        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=5), entities=EntitiesOptions(sentiment=True,limit=1))).get_result()
+        features=Features(keywords=KeywordsOptions(sentiment=False,emotion=False,limit=numWords), entities=EntitiesOptions(sentiment=False,limit=numWords))).get_result()
 
-    print(response)
+    # print(response)
     return response
 
 @app.route('/getuploadedinfo', methods=['POST'])
@@ -93,4 +101,4 @@ def getTranscriptForUploadedAudio(mp3File):
 	STT_service.set_service_url('https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/816f28bc-9729-48ca-b11a-c736524e6ad6')
 	# TODO
 
-getKeywordsText("The elephant was big and large, it has grey feet and likes George Washington. The big elephant has a pet dog.")
+get_video_info()
