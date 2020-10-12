@@ -126,10 +126,10 @@ function App() {
   return (
     <Row>
       <MainDiv>
-        <div>
+        <Row>
           <Logo src="https://anshjainpublic.s3.us-east-2.amazonaws.com/InfoLynx.jpg" />
           <Title>Welcome to InfoLynx!</Title>
-        </div>
+        </Row>
         <InputGroup id="link" placeholder="Enter YouTube URL!" fill={false} rightElement={PlayButton}/>
         <VideoWrapper>
           { videoID ? (
